@@ -17,10 +17,10 @@
             <div class="card-body">
                 <form method="post" action="./?sec=notas.abel">
                     <div class="mb-3">
-                        <label for="texto">Datos a analizar:</label>
-                        <textarea class="form-control" name="texto" id="texto" rows="10"
-                                  placeholder="Inserte el json a analizar"></textarea>
-                        <p class="text-danger small"></p>
+                        <label for="input_json">Datos a analizar:</label>
+                        <textarea class="form-control" name="input_json" id="input_json" rows="10"
+                                  placeholder="Inserte el json a analizar"><?php echo isset($data['input_json']) ? $data['input_json'] : ''; ?></textarea>
+                        <p class="text-danger small"><?php echo isset($data['errors']['input_json']) ? $data['errors']['input_json'] : ''; ?></p>
                     </div>
                     <div class="mb-3">
                         <input type="submit" value="Enviar" name="enviar" class="btn btn-primary"/>
