@@ -39,7 +39,7 @@
                     foreach ($data['tabla'] as $asignatura => $datos) {
                         ?>
                         <tr>
-                            <td><?php echo $asignatura ?></td>
+                            <td><?php echo ucfirst($asignatura) ?></td>
                             <td><?php echo (is_numeric($datos['media'])) ? number_format($datos['media'], 2, ',') : $datos['media']; ?></td>
                             <td><?php echo $datos['suspensos'] ?></td>
                             <td><?php echo $datos['aprobados'] ?></td>
