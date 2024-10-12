@@ -9,16 +9,60 @@ if (!empty($_POST)) {
 
     if (empty($data['errors'])) {
         //Procesamos
-        $data['$resultado'] = getResult($_POST);
+        $data['tabla'] = getTabla($_POST);
+        $data['listados'] = getListados($_POST);
     }
 }
 
-
-
-function getResult(array $data_json): array
+function getListados(array $data_json): array
 {
     $result = [];
-    $suspensos_materias = [];
+    $json = json_decode($data_json['input_json'], true);
+
+    $suspensos = [];
+    $no_promocionan = [];
+    $nombres_alumnos = [];
+
+    foreach ($json as $asignatura => $alumnos) {
+        foreach ($alumnos as $nombre_alumno => $notas_alumno) {
+            $media_alumno = array_sum($notas_alumno) / count($notas_alumno);
+
+            // Manejo de suspensos
+            if ($media_alumno < 5) {
+                if (in_array($nombre_alumno, $suspensos)) {
+                    if (!in_array($nombre_alumno, $no_promocionan)) {
+                        $no_promocionan[] = $nombre_alumno;
+                    }
+                } else {
+                    $suspensos[] = $nombre_alumno;
+                }
+            }
+
+            // Manejo de alumnos
+            if (!in_array($nombre_alumno, $nombres_alumnos)) {
+                $nombres_alumnos[] = $nombre_alumno;
+            }
+        }
+    }
+
+    $aprobados = array_diff($nombres_alumnos, $suspensos);
+    $promocionan = array_diff($nombres_alumnos, $no_promocionan);
+
+
+    // Puedes retornar los resultados si es necesario
+    $result['suspensos'] = $suspensos;
+    $result['no_promocionan'] = $no_promocionan;
+    $result['aprobados'] = $aprobados;
+    $result['promocionan'] = $promocionan;
+
+    return $result;
+}
+
+
+function getTabla(array $data_json): array
+{
+    $result = [];
+    //$suspensos_materias = [];
 
     $json = json_decode($data_json['input_json'], true);
 
@@ -37,7 +81,7 @@ function getResult(array $data_json): array
         $suspensos = 0;
         $nota_minima = 10;
         $nota_maxima = 0;
-        $suspensos_materias[$asignatura] = [];
+        //$suspensos_materias[$asignatura] = [];
 
 
         foreach ($alumnos as $nombre_alumno => $notas_alumno) {
@@ -49,7 +93,7 @@ function getResult(array $data_json): array
                     $aprobados++;
                 }else{
                     $suspensos++;
-                    $suspensos_materias[$asignatura] += [$nombre_alumno => $media_alumno];
+                    //$suspensos_materias[$asignatura] += [$nombre_alumno => $media_alumno];
                 }
 
                 if (max($notas_alumno) > $nota_maxima){
@@ -69,7 +113,7 @@ function getResult(array $data_json): array
         $result[$asignatura]['suspensos'] = $suspensos;
     }
 
-    $result['suspensos_materias'] = $suspensos_materias;
+    //$result['suspensos_materias'] = $suspensos_materias;
     return $result;
 }
 
