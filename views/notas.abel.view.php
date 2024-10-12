@@ -6,6 +6,78 @@
 <!-- Content Row -->
 
 <div class="row">
+
+    <!--Alerts con resultados-->
+    <div class="col-12">
+        <?php
+        if (isset($data['listados'])){
+        ?>
+        <div class="card shadow mb-4">
+            <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Listados</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+
+                <!-- Primera fila -->
+                <div class="d-flex flex-wrap">
+                    <!-- Aprobados -->
+                    <div class="col-12 col-lg-6 text-center">
+                        <h4>Aprobados:</h4>
+                        <div class="alert alert-success">
+                            <?php
+                            foreach($data['listados']['aprobados'] as $alumno){
+                                ?>
+                                <p><?php echo $alumno; ?></p>
+                                <?php } ?>
+                        </div>
+                    </div>
+                    <!-- Suspensos -->
+                    <div class="col-12 col-lg-6 text-center">
+                        <h4>Suspensos:</h4>
+                        <div class="alert alert-warning">
+                            <?php
+                            foreach($data['listados']['suspensos'] as $alumno){
+                                ?>
+                                <p><?php echo $alumno; ?></p>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segunda fila -->
+                <div class="d-flex flex-wrap">
+                    <!-- Promocionan -->
+                    <div class="col-12 col-lg-6 text-center">
+                        <h4>Promocionan:</h4>
+                        <div class="alert alert-info">
+                            <?php
+                            foreach($data['listados']['promocionan'] as $alumno){
+                                ?>
+                                <p><?php echo $alumno; ?></p>
+                            <?php } ?>
+                        </div>
+                    </div>
+                    <!-- No promocionan -->
+                    <div class="col-12 col-lg-6 text-center">
+                        <h4>No promocionan:</h4>
+                        <div class="alert alert-danger">
+                            <?php
+                            foreach($data['listados']['no_promocionan'] as $alumno){
+                                ?>
+                                <p><?php echo $alumno; ?></p>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <?php } ?>
+    </div>
+
+    <!--Resultados Tabla-->
     <div class="col-12">
         <?php
         if (isset($data['tabla'])){
@@ -54,6 +126,7 @@
         ?>
     </div>
 
+    <!--Formulario-->
     <div class="col-12">
         <div class="card shadow mb-4">
             <div
