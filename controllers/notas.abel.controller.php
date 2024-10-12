@@ -6,6 +6,65 @@ $data = [];
 if (!empty($_POST)) {
     $data['input_json'] = trim(filter_var($_POST['input_json'], FILTER_SANITIZE_SPECIAL_CHARS));
     $data['errors'] = checkForm($_POST);
+
+    if (empty($data['errors'])) {
+        //Procesamos
+        $data['$resultado'] = getResult($_POST);
+    }
+}
+
+
+
+function getResult(array $data_json): array
+{
+    $result = [];
+
+    $json = json_decode($data_json['input_json'], true);
+
+    foreach ($json as $asignatura => $alumnos) {
+
+        $result[$asignatura] = [
+            'media' => 0,
+            'aprobados' => 0,
+            'suspensos' => 0,
+            'máximo' => [],
+            'mínimo' => []
+        ];
+
+        $media = 0;
+        $aprobados = 0;
+        $suspensos = 0;
+        $nota_minima = 10;
+        $nota_maxima = 0;
+
+        foreach ($alumnos as $nombre_alumno => $notas_alumno) {
+                $media_alumno = array_sum($notas_alumno)/count($notas_alumno);
+                $media += $media_alumno;
+
+                if ($media_alumno >= 5){
+                    $aprobados++;
+                }else{
+                    $suspensos++;
+                }
+
+                if (max($notas_alumno) > $nota_maxima){
+                    $nota_maxima = max($notas_alumno);
+                    $result[$asignatura]['máximo'] = [$nombre_alumno => $nota_maxima];
+                }
+
+                if (min($notas_alumno) < $nota_minima){
+                    $nota_minima = min($notas_alumno);
+                    $result[$asignatura]['mínimo'] = [$nombre_alumno => $nota_minima];
+                }
+        }
+        $media /= count($alumnos);
+
+        $result[$asignatura]['media'] = $media;
+        $result[$asignatura]['aprobados'] = $aprobados;
+        $result[$asignatura]['suspensos'] = $suspensos;
+    }
+
+    return $result;
 }
 
 function checkForm(array $data_json): array
