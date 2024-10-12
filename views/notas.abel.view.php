@@ -15,6 +15,54 @@
             </div>
             <!-- Card Body -->
             <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>
+                            Asignatura
+                        </th>
+                        <th>
+                            Media
+                        </th>
+                        <th>
+                            Suspensos
+                        </th>
+                        <th>
+                            Aprobados
+                        </th>
+                        <th>Nota más alta</th>
+                        <th>Nota mínima</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    foreach ($data['tabla'] as $asignatura => $datos) {
+                        ?>
+                        <tr>
+                            <td><?php echo $asignatura ?></td>
+                            <td><?php echo (is_numeric($datos['media'])) ? number_format($datos['media'], 2, ',') : $datos['media']; ?></td>
+                            <td><?php echo $datos['suspensos'] ?></td>
+                            <td><?php echo $datos['aprobados'] ?></td>
+                            <td><?php
+                                if (is_array($datos['máximo'])) {
+                                    foreach ($datos['máximo'] as $alumno => $nota){
+                                        echo $nota;
+                                    }
+                                }
+                                ?></td>
+                            <td><?php
+                                if (is_array($datos['mínimo'])) {
+                                    foreach ($datos['mínimo'] as $alumno => $nota){
+                                        echo $nota;
+                                    }
+                                }
+                                ?></td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                    </tbody>
+                </table>
                 <form method="post" action="./?sec=notas.abel">
                     <div class="mb-3">
                         <label for="input_json">Datos a analizar:</label>
