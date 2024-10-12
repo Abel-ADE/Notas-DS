@@ -18,6 +18,7 @@ if (!empty($_POST)) {
 function getResult(array $data_json): array
 {
     $result = [];
+    $suspensos_materias = [];
 
     $json = json_decode($data_json['input_json'], true);
 
@@ -36,15 +37,19 @@ function getResult(array $data_json): array
         $suspensos = 0;
         $nota_minima = 10;
         $nota_maxima = 0;
+        $suspensos_materias[$asignatura] = [];
+
 
         foreach ($alumnos as $nombre_alumno => $notas_alumno) {
                 $media_alumno = array_sum($notas_alumno)/count($notas_alumno);
                 $media += $media_alumno;
 
+
                 if ($media_alumno >= 5){
                     $aprobados++;
                 }else{
                     $suspensos++;
+                    $suspensos_materias[$asignatura] += [$nombre_alumno => $media_alumno];
                 }
 
                 if (max($notas_alumno) > $nota_maxima){
@@ -64,6 +69,7 @@ function getResult(array $data_json): array
         $result[$asignatura]['suspensos'] = $suspensos;
     }
 
+    $result['suspensos_materias'] = $suspensos_materias;
     return $result;
 }
 
