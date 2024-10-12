@@ -14,6 +14,11 @@ if (!empty($_POST)) {
     }
 }
 
+/**
+ * Función para devolver los listados
+ * @param array $data_json el contenido de la variable superglobal $_POST
+ * @return array los listados en un array
+ */
 function getListados(array $data_json): array
 {
     $result = [];
@@ -27,7 +32,7 @@ function getListados(array $data_json): array
         foreach ($alumnos as $nombre_alumno => $notas_alumno) {
             $media_alumno = array_sum($notas_alumno) / count($notas_alumno);
 
-            // Manejo de suspensos
+            //Añado los suspensos
             if ($media_alumno < 5) {
                 if (in_array($nombre_alumno, $suspensos)) {
                     if (!in_array($nombre_alumno, $no_promocionan)) {
@@ -38,7 +43,7 @@ function getListados(array $data_json): array
                 }
             }
 
-            // Manejo de alumnos
+            //Añado alumnos al array de nombres
             if (!in_array($nombre_alumno, $nombres_alumnos)) {
                 $nombres_alumnos[] = $nombre_alumno;
             }
@@ -49,7 +54,7 @@ function getListados(array $data_json): array
     $promocionan = array_diff($nombres_alumnos, $no_promocionan);
 
 
-    // Puedes retornar los resultados si es necesario
+    // Devuelvo los resultados
     $result['suspensos'] = $suspensos;
     $result['no_promocionan'] = $no_promocionan;
     $result['aprobados'] = $aprobados;
@@ -58,7 +63,11 @@ function getListados(array $data_json): array
     return $result;
 }
 
-
+/**
+ * Función para devolver la tabla de resultados
+ * @param array $data_json el contenido de la variable superglobal $_POST
+ * @return array un array con la tabla que vamos a mostrar en la vista
+ */
 function getTabla(array $data_json): array
 {
     $result = [];
@@ -117,6 +126,11 @@ function getTabla(array $data_json): array
     return $result;
 }
 
+/**
+ * Función que comprueba los datos introducidos por el usuario
+ * @param array $data_json el contenido de la variable superglobal $_POST
+ * @return array un array de errores
+ */
 function checkForm(array $data_json): array
 {
     $errors = [];
