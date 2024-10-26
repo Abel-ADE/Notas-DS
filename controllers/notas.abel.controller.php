@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 $data = [];
@@ -94,26 +95,26 @@ function getTabla(array $data_json): array
 
 
         foreach ($alumnos as $nombre_alumno => $notas_alumno) {
-                $media_alumno = array_sum($notas_alumno)/count($notas_alumno);
-                $media += $media_alumno;
+            $media_alumno = array_sum($notas_alumno) / count($notas_alumno);
+            $media += $media_alumno;
 
 
-                if ($media_alumno >= 5){
-                    $aprobados++;
-                }else{
-                    $suspensos++;
-                    //$suspensos_materias[$asignatura] += [$nombre_alumno => $media_alumno];
-                }
+            if ($media_alumno >= 5) {
+                $aprobados++;
+            } else {
+                $suspensos++;
+                //$suspensos_materias[$asignatura] += [$nombre_alumno => $media_alumno];
+            }
 
-                if (max($notas_alumno) > $nota_maxima){
-                    $nota_maxima = max($notas_alumno);
-                    $result[$asignatura]['máximo'] = [$nombre_alumno => $nota_maxima];
-                }
+            if (max($notas_alumno) > $nota_maxima) {
+                $nota_maxima = max($notas_alumno);
+                $result[$asignatura]['máximo'] = [$nombre_alumno => $nota_maxima];
+            }
 
-                if (min($notas_alumno) < $nota_minima){
-                    $nota_minima = min($notas_alumno);
-                    $result[$asignatura]['mínimo'] = [$nombre_alumno => $nota_minima];
-                }
+            if (min($notas_alumno) < $nota_minima) {
+                $nota_minima = min($notas_alumno);
+                $result[$asignatura]['mínimo'] = [$nombre_alumno => $nota_minima];
+            }
         }
         $media /= count($alumnos);
 
@@ -141,7 +142,7 @@ function checkForm(array $data_json): array
     } else {
         if (is_numeric($data_json['input_json'])) {
             $errors['input_json'][] = 'El campo debe ser un texto.';
-        }else {
+        } else {
 
             $json = json_decode($data_json['input_json'], true);
 
@@ -154,22 +155,24 @@ function checkForm(array $data_json): array
 
                 foreach ($json as $asignatura => $alumnos) {
                     //Valido el texto de la asignatura
-                    if (is_numeric($asignatura) || !is_string($asignatura)) {
-                        $errors['input_json'][] = 'El campo asignatura debe ser un texto.';
+                    if (is_numeric($asignatura) || !is_string($asignatura) || mb_strlen(trim($asignatura)) < 1) {
+                        $errors['input_json'][] = "'$asignatura' no es un nombre de asignatura válido";
                     }
 
                     //Valido el objeto alumnos de cada asignatura
                     if (!is_array($alumnos)) {
-                        $errors['input_json'][] = 'La lista de alumnos debe ser un json.';
+                        $errors['input_json'][] = "'$asignatura' no contiene un array de alumnos";
                     } else if (empty($alumnos)) {
                         $errors['input_json'][] = 'La lista de alumnos no puede estar vacia.';
                     } else {
                         foreach ($alumnos as $alumno => $notas) {
                             //Valido cada alumno
                             if (is_numeric($alumno)) {
-                                $errors['input_json'][] = 'El nombre del alumno debe ser un texto.';
+                                $errors['input_json'][] = "El alumno '$alumno' de la asignatura '$asignatura' debe ser un texto.";
                             } elseif (empty($alumno)) {
-                                $errors['input_json'][] = 'El nombre del alumno no puede estar vacio.';
+                                $errors['input_json'][] = "El alumno '$alumno' de la asignatura '$asignatura' no puede estar vacio.";
+                            } elseif (!is_string($alumno) || mb_strlen(trim($alumno)) < 1) {
+                                $errors['input_json'][] = "El alumno '$alumno' de la asignatura '$asignatura' no es un nombre de alumno válido";
                             }
 
                             //Valido las notas de cada alumno
@@ -181,14 +184,15 @@ function checkForm(array $data_json): array
                                 foreach ($notas as $nota) {
                                     //Valido que cada nota sea un número
                                     if (!is_numeric($nota)) {
-                                        $errors['input_json'][] = 'Cada nota debe ser un número.';
+                                        $errors['input_json'][] = "La nota '$nota' del alumno '$alumno' en la asignatura '$asignatura' no es un número";
+                                    }else if ($nota < 0 || $nota > 10) {
+                                        $errors['input_json'][] = "La nota '$nota' del alumno '$alumno' en la asignatura '$asignatura' no tiene un valor entre 0 y 10";
                                     }
                                 }
                             }
                         }
                     }
                 }
-
             }
         }
     }
